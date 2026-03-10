@@ -270,6 +270,9 @@ function bindWindowSlider(sliderId, valId, defaultIdx, onChange) {
 function bindToggle(checkboxId, filterKey) {
   const cb   = document.getElementById(checkboxId);
   const card = document.getElementById(`ctrl-${filterKey}`);
+  // Force checkbox to match JS state, overriding any browser form restoration
+  cb.checked = state.filters[filterKey].enabled;
+  card.classList.toggle('disabled', !cb.checked);
   cb.addEventListener('change', () => {
     state.filters[filterKey].enabled = cb.checked;
     card.classList.toggle('disabled', !cb.checked);
