@@ -94,6 +94,34 @@ function emaFilter(data, alpha) {
   return result;
 }
 
+/**
+ * Double EMA (second-order EMA) — applies EMA twice with the same alpha.
+ * Smoother than single EMA but with more lag.
+ * @param {Array<{time:number, value:number}>} data
+ * @param {number} alpha  0 < alpha < 1
+ * @returns {number[]}
+ */
+function doubleEmaFilter(data, alpha) {
+  const pass1 = emaFilter(data, alpha);
+  const pass1Data = data.map((p, i) => ({ time: p.time, value: pass1[i] }));
+  return emaFilter(pass1Data, alpha);
+}
+
+/**
+ * Outlier Removal + Smoothing — two-stage filter.
+ * Stage 1: Median filter (removes outliers/spikes).
+ * Stage 2: EMA (smooths the cleaned signal).
+ * @param {Array<{time:number, value:number}>} data  sorted ascending by time
+ * @param {number} windowHrs  median filter window
+ * @param {number} alpha      EMA alpha (per-sample)
+ * @returns {number[]}
+ */
+function medianEmaFilter(data, windowHrs, alpha) {
+  const medianPass = medianFilter(data, windowHrs);
+  const medianData = data.map((p, i) => ({ time: p.time, value: medianPass[i] }));
+  return emaFilter(medianData, alpha);
+}
+
 // ── Step Response ─────────────────────────────────────────────────────────────
 
 /**
@@ -125,6 +153,8 @@ function generateStepResponse(filters, settleThreshold) {
     med: (d) => medianFilter(d, filters.med.windowHrs),
     pct: (d) => percentileClippedAvg(d, filters.pct.windowHrs, filters.pct.trimPct),
     ema: (d) => emaFilter(d, filters.ema.alpha),
+    ors:  (d) => medianEmaFilter(d, filters.ors.windowHrs, filters.ors.alpha),
+    ema2: (d) => doubleEmaFilter(d, filters.ema2.alpha),
   };
 
   const results = {};

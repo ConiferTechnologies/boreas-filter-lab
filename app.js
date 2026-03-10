@@ -2,10 +2,10 @@
 
 // ── Constants ──────────────────────────────────────────────────────────────
 
-const FILTER_KEYS   = ['ma', 'med', 'pct', 'ema'];
+const FILTER_KEYS   = ['ma', 'med', 'pct', 'ema', 'ors', 'ema2'];
 
-const FILTER_COLORS = { ma: '#00BFFF', med: '#FF6B00', pct: '#39FF14', ema: '#FF00FF' };
-const FILTER_NAMES  = { ma: 'Moving Avg', med: 'Median', pct: 'Pct Clipped', ema: 'EMA' };
+const FILTER_COLORS = { ma: '#00BFFF', med: '#FF6B00', pct: '#39FF14', ema: '#FF00FF', ors: '#FF4444', ema2: '#9D00FF' };
+const FILTER_NAMES  = { ma: 'Moving Avg', med: 'Median', pct: 'Pct Clipped', ema: 'EMA', ors: 'ORS', ema2: 'Double EMA' };
 
 const RAW_WEIGHT_COLOR = '#ffffff';
 const RAW_ROL_COLOR    = '#ffffff';
@@ -62,10 +62,12 @@ const state = {
   weightData: [],   // [{time: ms, value: number}]
   rolData:    [],   // [{time: ms, value: number}]
   filters: {
-    ma:  { enabled: true, windowHrs: 1 },
-    med: { enabled: true, windowHrs: 2 },
-    pct: { enabled: true, windowHrs: 1, trimPct: 10 },
-    ema: { enabled: true, alpha: 0.1 },
+    ma:  { enabled: false, windowHrs: 1 },
+    med: { enabled: false, windowHrs: 2 },
+    pct: { enabled: false, windowHrs: 1, trimPct: 10 },
+    ema: { enabled: false, alpha: 0.1 },
+    ors:  { enabled: false, windowHrs: 1, alpha: 0.1 },
+    ema2: { enabled: false, alpha: 0.1 },
   },
   settleThreshold: 5,
   graphLocked: { g1: true, g2: true }, // default: locked (autoscale, no interaction)
@@ -209,6 +211,25 @@ function setupFilterControls() {
   bindWindowSlider('ma-win',  'ma-win-val',  2, (v) => { state.filters.ma.windowHrs  = v; debouncedRefreshFiltered(); });
   bindWindowSlider('med-win', 'med-win-val', 3, (v) => { state.filters.med.windowHrs = v; debouncedRefreshFiltered(); });
   bindWindowSlider('pct-win', 'pct-win-val', 2, (v) => { state.filters.pct.windowHrs = v; debouncedRefreshFiltered(); });
+  bindWindowSlider('ors-win', 'ors-win-val', 2, (v) => { state.filters.ors.windowHrs = v; debouncedRefreshFiltered(); });
+
+  const ema2AlphaSl  = document.getElementById('ema2-alpha');
+  const ema2AlphaVal = document.getElementById('ema2-alpha-val');
+  ema2AlphaSl.addEventListener('input', () => {
+    const v = +ema2AlphaSl.value / 100;
+    ema2AlphaVal.textContent = v.toFixed(2);
+    state.filters.ema2.alpha = v;
+    debouncedRefreshFiltered();
+  });
+
+  const orsAlphaSl  = document.getElementById('ors-alpha');
+  const orsAlphaVal = document.getElementById('ors-alpha-val');
+  orsAlphaSl.addEventListener('input', () => {
+    const v = +orsAlphaSl.value / 100;
+    orsAlphaVal.textContent = v.toFixed(2);
+    state.filters.ors.alpha = v;
+    debouncedRefreshFiltered();
+  });
 
   const trimSl  = document.getElementById('pct-trim');
   const trimVal = document.getElementById('pct-trim-val');
@@ -231,6 +252,7 @@ function setupFilterControls() {
   for (const key of FILTER_KEYS) {
     bindToggle(`${key}-on`, key);
   }
+
 }
 
 function bindWindowSlider(sliderId, valId, defaultIdx, onChange) {
@@ -291,10 +313,10 @@ function setupGraphLockToggle(checkboxId, key, divId) {
 // ── Graph Helpers ──────────────────────────────────────────────────────────
 
 /** Build a Plotly subplot layout for Weight (top) + RoL (bottom). */
-function subplotLayout(locked = true, extraOpts = {}) {
+function subplotLayout(locked = true, extraOpts = {}, height = 500) {
   return {
     ...BASE_LAYOUT,
-    height: 500,
+    height,
     margin: { t: 16, b: 50, l: 75, r: 20 },
     yaxis: {
       ...AXIS,
@@ -401,6 +423,8 @@ function renderGraph2() {
       if (key === 'med') filtered = medianFilter(state.rolData, f.windowHrs);
       if (key === 'pct') filtered = percentileClippedAvg(state.rolData, f.windowHrs, f.trimPct);
       if (key === 'ema') filtered = emaFilter(state.rolData, f.alpha);
+      if (key === 'ors')  filtered = medianEmaFilter(state.rolData, f.windowHrs, f.alpha);
+      if (key === 'ema2') filtered = doubleEmaFilter(state.rolData, f.alpha);
 
       traces.push(traceLine(
         isoTimes(state.rolData), filtered,
@@ -409,7 +433,7 @@ function renderGraph2() {
     }
   }
 
-  Plotly.react('graph2', traces, subplotLayout(state.graphLocked.g2, { legend: { ...BASE_LAYOUT.legend, x: 0, y: 1 } }), graphConfig(state.graphLocked.g2));
+  Plotly.react('graph2', traces, subplotLayout(state.graphLocked.g2, { legend: { ...BASE_LAYOUT.legend, x: 0, y: 1 } }, 650), graphConfig(state.graphLocked.g2));
 }
 
 // ── Graph 3 — Step Response ────────────────────────────────────────────────

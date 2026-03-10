@@ -90,7 +90,7 @@
         <div class="filter-card" id="ctrl-ma" data-filter="ma">
           <div class="fc-header">
             <label class="toggle" for="ma-on">
-              <input type="checkbox" id="ma-on" checked>
+              <input type="checkbox" id="ma-on">
               <span class="toggle-track"></span>
             </label>
             <span class="fc-name">Moving Average</span>
@@ -109,7 +109,7 @@
         <div class="filter-card" id="ctrl-med" data-filter="med">
           <div class="fc-header">
             <label class="toggle" for="med-on">
-              <input type="checkbox" id="med-on" checked>
+              <input type="checkbox" id="med-on">
               <span class="toggle-track"></span>
             </label>
             <span class="fc-name">Median</span>
@@ -128,7 +128,7 @@
         <div class="filter-card" id="ctrl-pct" data-filter="pct">
           <div class="fc-header">
             <label class="toggle" for="pct-on">
-              <input type="checkbox" id="pct-on" checked>
+              <input type="checkbox" id="pct-on">
               <span class="toggle-track"></span>
             </label>
             <span class="fc-name">Pct Clipped Avg</span>
@@ -152,7 +152,7 @@
         <div class="filter-card" id="ctrl-ema" data-filter="ema">
           <div class="fc-header">
             <label class="toggle" for="ema-on">
-              <input type="checkbox" id="ema-on" checked>
+              <input type="checkbox" id="ema-on">
               <span class="toggle-track"></span>
             </label>
             <span class="fc-name">EMA</span>
@@ -163,6 +163,49 @@
               <span class="param-lbl">Alpha</span>
               <span class="param-val" id="ema-alpha-val">0.10</span>
               <input type="range" id="ema-alpha" min="1" max="99" value="10" step="1">
+            </div>
+          </div>
+        </div>
+
+        <!-- Double EMA -->
+        <div class="filter-card" id="ctrl-ema2" data-filter="ema2">
+          <div class="fc-header">
+            <label class="toggle" for="ema2-on">
+              <input type="checkbox" id="ema2-on">
+              <span class="toggle-track"></span>
+            </label>
+            <span class="fc-name">Double EMA</span>
+            <span class="fc-dot" style="background:#9D00FF"></span>
+          </div>
+          <div class="fc-params">
+            <div class="param-row">
+              <span class="param-lbl">Alpha</span>
+              <span class="param-val" id="ema2-alpha-val">0.10</span>
+              <input type="range" id="ema2-alpha" min="1" max="99" value="10" step="1">
+            </div>
+          </div>
+        </div>
+
+        <!-- Outlier Removal + Smoothing -->
+        <div class="filter-card" id="ctrl-ors" data-filter="ors">
+          <div class="fc-header">
+            <label class="toggle" for="ors-on">
+              <input type="checkbox" id="ors-on">
+              <span class="toggle-track"></span>
+            </label>
+            <span class="fc-name">Outlier Removal + Smoothing</span>
+            <span class="fc-dot" style="background:#FF4444"></span>
+          </div>
+          <div class="fc-params">
+            <div class="param-row">
+              <span class="param-lbl">Window</span>
+              <span class="param-val" id="ors-win-val">1 hr</span>
+              <input type="range" class="win-slider" id="ors-win" min="0" max="13" value="2" step="1">
+            </div>
+            <div class="param-row">
+              <span class="param-lbl">Alpha</span>
+              <span class="param-val" id="ors-alpha-val">0.10</span>
+              <input type="range" id="ors-alpha" min="1" max="99" value="10" step="1">
             </div>
           </div>
         </div>
