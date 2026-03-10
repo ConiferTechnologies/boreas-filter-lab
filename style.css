@@ -1,0 +1,457 @@
+/* ── Reset & base ─────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #0b0b1a;
+  --surface:   #111126;
+  --surface2:  #181830;
+  --border:    #252548;
+  --border2:   #32325a;
+  --text:      #cccce0;
+  --text-dim:  #6868a0;
+  --accent:    #5050ff;
+  --warn:      #ff8c00;
+
+  --ma:   #00BFFF;
+  --med:  #FF6B00;
+  --pct:  #39FF14;
+  --ema:  #FF00FF;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* ── Header ───────────────────────────────────────────────────────────────── */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 28px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+header h1 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.3px;
+}
+
+.header-sub {
+  color: var(--text-dim);
+  font-size: 0.8rem;
+}
+
+/* ── Main layout ──────────────────────────────────────────────────────────── */
+main {
+  max-width: 1800px;
+  margin: 0 auto;
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* ── Upload Section ───────────────────────────────────────────────────────── */
+.upload-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.upload-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.upload-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+}
+
+.upload-hint {
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.drop-zone {
+  background: var(--surface);
+  border: 2px dashed var(--border2);
+  border-radius: 8px;
+  padding: 24px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.18s, background 0.18s;
+}
+
+.drop-zone:hover,
+.drop-zone.dragover {
+  border-color: var(--accent);
+  background: var(--surface2);
+}
+
+.drop-zone.loaded {
+  border-color: #3a7a3a;
+  border-style: solid;
+}
+
+.drop-icon { font-size: 1.6rem; margin-bottom: 6px; }
+
+.drop-zone p { color: var(--text-dim); margin: 3px 0; font-size: 0.82rem; }
+
+.browse-lbl {
+  color: #6688ff;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.drop-hint { font-size: 0.75rem !important; }
+.drop-hint code {
+  background: var(--surface2);
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  color: var(--text);
+}
+
+.upload-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.78rem;
+  padding: 6px 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  color: var(--text-dim);
+}
+
+.upload-info .info-rows { color: #78e878; font-weight: 600; }
+.upload-info .info-range { color: var(--text); }
+
+/* ── Graph Sections ───────────────────────────────────────────────────────── */
+.graph-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.section-hdr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+}
+
+.section-hdr h2 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.section-sub {
+  color: var(--text-dim);
+  font-weight: 400;
+  font-size: 0.82rem;
+  margin-left: 6px;
+}
+
+/* Plot wrapper — overlays empty-state message */
+.plot-wrap {
+  position: relative;
+}
+
+.plot { width: 100%; min-height: 480px; }
+
+.plot-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  background: var(--surface);
+  pointer-events: none;
+}
+
+.plot-empty.hidden { display: none; }
+
+/* ── Graph 2 side-by-side layout ─────────────────────────────────────────── */
+#graph2-layout {
+  display: flex;
+  align-items: stretch;
+}
+
+#graph2-layout .plot-wrap {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── Filter Panel ─────────────────────────────────────────────────────────── */
+#filter-panel {
+  width: 270px;
+  flex-shrink: 0;
+  border-left: 1px solid var(--border);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+  max-height: 520px;
+}
+
+.filter-card {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 11px;
+  background: var(--surface2);
+  transition: opacity 0.2s;
+}
+
+/* Per-filter left border accent */
+.filter-card[data-filter="ma"]  { border-left: 3px solid var(--ma); }
+.filter-card[data-filter="med"] { border-left: 3px solid var(--med); }
+.filter-card[data-filter="pct"] { border-left: 3px solid var(--pct); }
+.filter-card[data-filter="ema"] { border-left: 3px solid var(--ema); }
+
+.filter-card.disabled { opacity: 0.45; }
+
+.fc-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 9px;
+}
+
+.fc-name { flex: 1; font-weight: 600; font-size: 0.82rem; color: #fff; }
+
+.fc-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ── Toggle switch ────────────────────────────────────────────────────────── */
+.toggle {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.toggle-track {
+  display: inline-block;
+  width: 30px;
+  height: 17px;
+  background: var(--border2);
+  border-radius: 9px;
+  position: relative;
+  transition: background 0.2s;
+}
+
+.toggle-track::after {
+  content: '';
+  position: absolute;
+  width: 13px;
+  height: 13px;
+  background: #fff;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.2s;
+}
+
+.toggle input:checked + .toggle-track { background: var(--accent); }
+.toggle input:checked + .toggle-track::after { transform: translateX(13px); }
+
+/* Per-filter toggle colors when checked */
+.filter-card[data-filter="ma"]  .toggle input:checked + .toggle-track { background: var(--ma); }
+.filter-card[data-filter="med"] .toggle input:checked + .toggle-track { background: var(--med); }
+.filter-card[data-filter="pct"] .toggle input:checked + .toggle-track { background: var(--pct); }
+.filter-card[data-filter="ema"] .toggle input:checked + .toggle-track { background: var(--ema); }
+
+/* ── Param rows ───────────────────────────────────────────────────────────── */
+.fc-params { display: flex; flex-direction: column; gap: 8px; }
+
+.param-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 8px;
+  row-gap: 3px;
+}
+
+.param-lbl {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  grid-column: 1;
+  grid-row: 1;
+  white-space: nowrap;
+}
+
+.param-val {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text);
+  grid-column: 2;
+  grid-row: 1;
+  text-align: right;
+}
+
+.param-row input[type="range"] {
+  grid-column: 1 / -1;
+  grid-row: 2;
+}
+
+/* ── Range sliders ────────────────────────────────────────────────────────── */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  background: var(--border2);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--bg);
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--bg);
+  cursor: pointer;
+}
+
+/* Per-filter slider thumb colors */
+.filter-card[data-filter="ma"]  input[type="range"]::-webkit-slider-thumb { background: var(--ma); }
+.filter-card[data-filter="med"] input[type="range"]::-webkit-slider-thumb { background: var(--med); }
+.filter-card[data-filter="pct"] input[type="range"]::-webkit-slider-thumb { background: var(--pct); }
+.filter-card[data-filter="ema"] input[type="range"]::-webkit-slider-thumb { background: var(--ema); }
+
+.filter-card[data-filter="ma"]  input[type="range"]::-moz-range-thumb { background: var(--ma); }
+.filter-card[data-filter="med"] input[type="range"]::-moz-range-thumb { background: var(--med); }
+.filter-card[data-filter="pct"] input[type="range"]::-moz-range-thumb { background: var(--pct); }
+.filter-card[data-filter="ema"] input[type="range"]::-moz-range-thumb { background: var(--ema); }
+
+/* ── Graph 3 threshold control ────────────────────────────────────────────── */
+.threshold-ctl {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.8rem;
+}
+
+.threshold-ctl label { color: var(--text-dim); }
+
+.threshold-ctl input[type="number"] {
+  width: 56px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 4px;
+  color: var(--text);
+  padding: 3px 7px;
+  font-size: 0.82rem;
+  text-align: center;
+}
+
+.threshold-ctl input[type="number"]:focus {
+  outline: 1px solid var(--accent);
+}
+
+/* ── Settle Info (now above graph) ───────────────────────────────────────── */
+#settle-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+  min-height: 46px;
+}
+
+.settle-chip {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 0.78rem;
+}
+
+.settle-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.settle-name { color: var(--text-dim); }
+.settle-time { font-weight: 600; color: var(--text); }
+
+/* ── Graph lock toggle (in section-hdr) ──────────────────────────────────── */
+.graph-lock-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.toggle-lbl {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  user-select: none;
+}
+
+/* ── Utility ──────────────────────────────────────────────────────────────── */
+.hidden { display: none !important; }

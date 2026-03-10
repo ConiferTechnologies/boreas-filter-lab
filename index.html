@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Filter Lab</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+</head>
+<body>
+
+<header>
+  <div class="header-title">
+    <span class="header-icon">&#9883;</span>
+    <h1>Filter Lab</h1>
+  </div>
+  <p class="header-sub">Sensor Filter Design Tool</p>
+</header>
+
+<main>
+
+  <!-- ── CSV Upload ─────────────────────────────────────────────────────── -->
+  <section id="upload-section">
+    <div class="upload-pair">
+
+      <div class="upload-card" id="weight-upload-card">
+        <div class="upload-label">Weight CSV <span class="upload-hint">(Datadog Export)</span></div>
+        <div class="drop-zone" id="weight-drop" tabindex="0" role="button"
+             aria-label="Drop Weight CSV here">
+          <div class="drop-icon">&#128202;</div>
+          <p>Drop file here or <label class="browse-lbl" for="weight-file">browse</label></p>
+          <p class="drop-hint">Columns used: <code>time</code>, <code>value</code></p>
+          <input type="file" id="weight-file" accept=".csv" hidden>
+        </div>
+        <div class="upload-info hidden" id="weight-info"></div>
+      </div>
+
+      <div class="upload-card" id="rol-upload-card">
+        <div class="upload-label">RoL CSV <span class="upload-hint">(Datadog Export)</span></div>
+        <div class="drop-zone" id="rol-drop" tabindex="0" role="button"
+             aria-label="Drop RoL CSV here">
+          <div class="drop-icon">&#128202;</div>
+          <p>Drop file here or <label class="browse-lbl" for="rol-file">browse</label></p>
+          <p class="drop-hint">Columns used: <code>time</code>, <code>value</code></p>
+          <input type="file" id="rol-file" accept=".csv" hidden>
+        </div>
+        <div class="upload-info hidden" id="rol-info"></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── Graph 1: Raw Data ───────────────────────────────────────────────── -->
+  <section class="graph-section">
+    <div class="section-hdr">
+      <h2>Graph 1 <span class="section-sub">Raw Data</span></h2>
+      <label class="toggle graph-lock-toggle" title="Allow pan and zoom">
+        <input type="checkbox" id="g1-unlock">
+        <span class="toggle-track"></span>
+        <span class="toggle-lbl">Unlock Graph Axes</span>
+      </label>
+    </div>
+    <div class="plot-wrap">
+      <div id="graph1" class="plot"></div>
+      <div class="plot-empty" id="graph1-empty">Load both CSV files to display data</div>
+    </div>
+  </section>
+
+  <!-- ── Graph 2: Filtered Data ─────────────────────────────────────────── -->
+  <section class="graph-section">
+    <div class="section-hdr">
+      <h2>Graph 2 <span class="section-sub">Filtered RoL</span></h2>
+      <label class="toggle graph-lock-toggle" title="Allow pan and zoom">
+        <input type="checkbox" id="g2-unlock">
+        <span class="toggle-track"></span>
+        <span class="toggle-lbl">Unlock Graph Axes</span>
+      </label>
+    </div>
+    <div id="graph2-layout">
+
+      <div class="plot-wrap">
+        <div id="graph2" class="plot"></div>
+        <div class="plot-empty" id="graph2-empty">Load both CSV files to display data</div>
+      </div>
+
+      <aside id="filter-panel">
+
+        <!-- Moving Average -->
+        <div class="filter-card" id="ctrl-ma" data-filter="ma">
+          <div class="fc-header">
+            <label class="toggle" for="ma-on">
+              <input type="checkbox" id="ma-on" checked>
+              <span class="toggle-track"></span>
+            </label>
+            <span class="fc-name">Moving Average</span>
+            <span class="fc-dot" style="background:#00BFFF"></span>
+          </div>
+          <div class="fc-params">
+            <div class="param-row">
+              <span class="param-lbl">Window</span>
+              <span class="param-val" id="ma-win-val">1 hr</span>
+              <input type="range" class="win-slider" id="ma-win" min="0" max="13" value="2" step="1">
+            </div>
+          </div>
+        </div>
+
+        <!-- Median -->
+        <div class="filter-card" id="ctrl-med" data-filter="med">
+          <div class="fc-header">
+            <label class="toggle" for="med-on">
+              <input type="checkbox" id="med-on" checked>
+              <span class="toggle-track"></span>
+            </label>
+            <span class="fc-name">Median</span>
+            <span class="fc-dot" style="background:#FF6B00"></span>
+          </div>
+          <div class="fc-params">
+            <div class="param-row">
+              <span class="param-lbl">Window</span>
+              <span class="param-val" id="med-win-val">2 hr</span>
+              <input type="range" class="win-slider" id="med-win" min="0" max="13" value="3" step="1">
+            </div>
+          </div>
+        </div>
+
+        <!-- Percentile Clipped -->
+        <div class="filter-card" id="ctrl-pct" data-filter="pct">
+          <div class="fc-header">
+            <label class="toggle" for="pct-on">
+              <input type="checkbox" id="pct-on" checked>
+              <span class="toggle-track"></span>
+            </label>
+            <span class="fc-name">Pct Clipped Avg</span>
+            <span class="fc-dot" style="background:#39FF14"></span>
+          </div>
+          <div class="fc-params">
+            <div class="param-row">
+              <span class="param-lbl">Window</span>
+              <span class="param-val" id="pct-win-val">1 hr</span>
+              <input type="range" class="win-slider" id="pct-win" min="0" max="13" value="2" step="1">
+            </div>
+            <div class="param-row">
+              <span class="param-lbl">Trim</span>
+              <span class="param-val" id="pct-trim-val">10%</span>
+              <input type="range" id="pct-trim" min="1" max="49" value="10" step="1">
+            </div>
+          </div>
+        </div>
+
+        <!-- EMA -->
+        <div class="filter-card" id="ctrl-ema" data-filter="ema">
+          <div class="fc-header">
+            <label class="toggle" for="ema-on">
+              <input type="checkbox" id="ema-on" checked>
+              <span class="toggle-track"></span>
+            </label>
+            <span class="fc-name">EMA</span>
+            <span class="fc-dot" style="background:#FF00FF"></span>
+          </div>
+          <div class="fc-params">
+            <div class="param-row">
+              <span class="param-lbl">Alpha</span>
+              <span class="param-val" id="ema-alpha-val">0.10</span>
+              <input type="range" id="ema-alpha" min="1" max="99" value="10" step="1">
+            </div>
+          </div>
+        </div>
+
+      </aside>
+    </div>
+  </section>
+
+  <!-- ── Graph 3: Step Response ─────────────────────────────────────────── -->
+  <section class="graph-section">
+    <div class="section-hdr">
+      <h2>Graph 3 <span class="section-sub">Step Response</span></h2>
+      <div class="threshold-ctl">
+        <label for="settle-thresh">Settle threshold</label>
+        <input type="number" id="settle-thresh" value="5" min="1" max="50" step="1">
+        <span>%</span>
+      </div>
+    </div>
+    <div id="settle-info"></div>
+    <div id="graph3" class="plot"></div>
+  </section>
+
+</main>
+
+<script src="filters.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
