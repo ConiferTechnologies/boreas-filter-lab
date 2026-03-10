@@ -16,6 +16,8 @@
   --med:  #FF6B00;
   --pct:  #39FF14;
   --ema:  #FF00FF;
+  --ors:  #FF4444;
+  --ema2: #9D00FF;
 }
 
 body {
@@ -226,8 +228,6 @@ main {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  overflow-y: auto;
-  max-height: 520px;
 }
 
 .filter-card {
@@ -239,10 +239,12 @@ main {
 }
 
 /* Per-filter left border accent */
-.filter-card[data-filter="ma"]  { border-left: 3px solid var(--ma); }
-.filter-card[data-filter="med"] { border-left: 3px solid var(--med); }
-.filter-card[data-filter="pct"] { border-left: 3px solid var(--pct); }
-.filter-card[data-filter="ema"] { border-left: 3px solid var(--ema); }
+.filter-card[data-filter="ma"]   { border-left: 3px solid var(--ma); }
+.filter-card[data-filter="med"]  { border-left: 3px solid var(--med); }
+.filter-card[data-filter="pct"]  { border-left: 3px solid var(--pct); }
+.filter-card[data-filter="ema"]  { border-left: 3px solid var(--ema); }
+.filter-card[data-filter="ors"]  { border-left: 3px solid var(--ors); }
+.filter-card[data-filter="ema2"] { border-left: 3px solid var(--ema2); }
 
 .filter-card.disabled { opacity: 0.45; }
 
@@ -303,10 +305,12 @@ main {
 .toggle input:checked + .toggle-track::after { transform: translateX(13px); }
 
 /* Per-filter toggle colors when checked */
-.filter-card[data-filter="ma"]  .toggle input:checked + .toggle-track { background: var(--ma); }
-.filter-card[data-filter="med"] .toggle input:checked + .toggle-track { background: var(--med); }
-.filter-card[data-filter="pct"] .toggle input:checked + .toggle-track { background: var(--pct); }
-.filter-card[data-filter="ema"] .toggle input:checked + .toggle-track { background: var(--ema); }
+.filter-card[data-filter="ma"]   .toggle input:checked + .toggle-track { background: var(--ma); }
+.filter-card[data-filter="med"]  .toggle input:checked + .toggle-track { background: var(--med); }
+.filter-card[data-filter="pct"]  .toggle input:checked + .toggle-track { background: var(--pct); }
+.filter-card[data-filter="ema"]  .toggle input:checked + .toggle-track { background: var(--ema); }
+.filter-card[data-filter="ors"]  .toggle input:checked + .toggle-track { background: var(--ors); }
+.filter-card[data-filter="ema2"] .toggle input:checked + .toggle-track { background: var(--ema2); }
 
 /* ── Param rows ───────────────────────────────────────────────────────────── */
 .fc-params { display: flex; flex-direction: column; gap: 8px; }
@@ -373,15 +377,19 @@ input[type="range"]::-moz-range-thumb {
 }
 
 /* Per-filter slider thumb colors */
-.filter-card[data-filter="ma"]  input[type="range"]::-webkit-slider-thumb { background: var(--ma); }
-.filter-card[data-filter="med"] input[type="range"]::-webkit-slider-thumb { background: var(--med); }
-.filter-card[data-filter="pct"] input[type="range"]::-webkit-slider-thumb { background: var(--pct); }
-.filter-card[data-filter="ema"] input[type="range"]::-webkit-slider-thumb { background: var(--ema); }
+.filter-card[data-filter="ma"]   input[type="range"]::-webkit-slider-thumb { background: var(--ma); }
+.filter-card[data-filter="med"]  input[type="range"]::-webkit-slider-thumb { background: var(--med); }
+.filter-card[data-filter="pct"]  input[type="range"]::-webkit-slider-thumb { background: var(--pct); }
+.filter-card[data-filter="ema"]  input[type="range"]::-webkit-slider-thumb { background: var(--ema); }
+.filter-card[data-filter="ors"]  input[type="range"]::-webkit-slider-thumb { background: var(--ors); }
+.filter-card[data-filter="ema2"] input[type="range"]::-webkit-slider-thumb { background: var(--ema2); }
 
-.filter-card[data-filter="ma"]  input[type="range"]::-moz-range-thumb { background: var(--ma); }
-.filter-card[data-filter="med"] input[type="range"]::-moz-range-thumb { background: var(--med); }
-.filter-card[data-filter="pct"] input[type="range"]::-moz-range-thumb { background: var(--pct); }
-.filter-card[data-filter="ema"] input[type="range"]::-moz-range-thumb { background: var(--ema); }
+.filter-card[data-filter="ma"]   input[type="range"]::-moz-range-thumb { background: var(--ma); }
+.filter-card[data-filter="med"]  input[type="range"]::-moz-range-thumb { background: var(--med); }
+.filter-card[data-filter="pct"]  input[type="range"]::-moz-range-thumb { background: var(--pct); }
+.filter-card[data-filter="ema"]  input[type="range"]::-moz-range-thumb { background: var(--ema); }
+.filter-card[data-filter="ors"]  input[type="range"]::-moz-range-thumb { background: var(--ors); }
+.filter-card[data-filter="ema2"] input[type="range"]::-moz-range-thumb { background: var(--ema2); }
 
 /* ── Graph 3 threshold control ────────────────────────────────────────────── */
 .threshold-ctl {
