@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:conifertechnologies.github.io)",
+      "Bash(curl -s https://conifertechnologies.github.io/boreas-filter-lab/)",
+      "Bash(curl -s https://conifertechnologies.github.io/boreas-filter-lab/app.js)"
+    ]
+  }
+}

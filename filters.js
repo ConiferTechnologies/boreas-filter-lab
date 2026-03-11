@@ -12,17 +12,20 @@ const WINDOW_VALUES = [0.25, 0.5, 1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 16, 24];
  */
 function movingAverage(data, windowHrs) {
   const windowMs = windowHrs * 3_600_000;
+  const half = windowMs / 2;
   const result = new Array(data.length);
-  let left = 0;
-  let sum = 0;
 
   for (let i = 0; i < data.length; i++) {
-    sum += data[i].value;
-    while (data[i].time - data[left].time > windowMs) {
-      sum -= data[left].value;
-      left++;
+    const tStart = data[i].time - half;
+    const tEnd   = data[i].time + half;
+    let sum = 0, count = 0;
+    for (let j = i; j >= 0 && data[j].time >= tStart; j--) {
+      sum += data[j].value; count++;
     }
-    result[i] = sum / (i - left + 1);
+    for (let j = i + 1; j < data.length && data[j].time <= tEnd; j++) {
+      sum += data[j].value; count++;
+    }
+    result[i] = sum / count;
   }
   return result;
 }
@@ -35,12 +38,17 @@ function movingAverage(data, windowHrs) {
  */
 function medianFilter(data, windowHrs) {
   const windowMs = windowHrs * 3_600_000;
+  const half = windowMs / 2;
   const result = new Array(data.length);
 
   for (let i = 0; i < data.length; i++) {
-    const tStart = data[i].time - windowMs;
+    const tStart = data[i].time - half;
+    const tEnd   = data[i].time + half;
     const vals = [];
     for (let j = i; j >= 0 && data[j].time >= tStart; j--) {
+      vals.push(data[j].value);
+    }
+    for (let j = i + 1; j < data.length && data[j].time <= tEnd; j++) {
       vals.push(data[j].value);
     }
     vals.sort((a, b) => a - b);
@@ -61,12 +69,17 @@ function medianFilter(data, windowHrs) {
  */
 function percentileClippedAvg(data, windowHrs, trimPct) {
   const windowMs = windowHrs * 3_600_000;
+  const half = windowMs / 2;
   const result = new Array(data.length);
 
   for (let i = 0; i < data.length; i++) {
-    const tStart = data[i].time - windowMs;
+    const tStart = data[i].time - half;
+    const tEnd   = data[i].time + half;
     const vals = [];
     for (let j = i; j >= 0 && data[j].time >= tStart; j--) {
+      vals.push(data[j].value);
+    }
+    for (let j = i + 1; j < data.length && data[j].time <= tEnd; j++) {
       vals.push(data[j].value);
     }
     vals.sort((a, b) => a - b);
@@ -122,6 +135,21 @@ function medianEmaFilter(data, windowHrs, alpha) {
   return emaFilter(medianData, alpha);
 }
 
+/**
+ * Median + Moving Average — two-stage filter.
+ * Stage 1: Median filter (centered window, removes outliers/spikes).
+ * Stage 2: Moving average (centered window, smooths the cleaned signal).
+ * @param {Array<{time:number, value:number}>} data  sorted ascending by time
+ * @param {number} medWindowHrs  median filter window
+ * @param {number} maWindowHrs   moving average window
+ * @returns {number[]}
+ */
+function medianMAFilter(data, medWindowHrs, maWindowHrs) {
+  const medianPass = medianFilter(data, medWindowHrs);
+  const medianData = data.map((p, i) => ({ time: p.time, value: medianPass[i] }));
+  return movingAverage(medianData, maWindowHrs);
+}
+
 // ── Step Response ─────────────────────────────────────────────────────────────
 
 /**
@@ -155,6 +183,7 @@ function generateStepResponse(filters, settleThreshold) {
     ema: (d) => emaFilter(d, filters.ema.alpha),
     ors:  (d) => medianEmaFilter(d, filters.ors.windowHrs, filters.ors.alpha),
     ema2: (d) => doubleEmaFilter(d, filters.ema2.alpha),
+    mma:  (d) => medianMAFilter(d, filters.mma.medWindowHrs, filters.mma.maWindowHrs),
   };
 
   const results = {};
