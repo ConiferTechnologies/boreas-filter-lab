@@ -210,6 +210,30 @@
           </div>
         </div>
 
+        <!-- Median + MA -->
+        <div class="filter-card" id="ctrl-mma" data-filter="mma">
+          <div class="fc-header">
+            <label class="toggle" for="mma-on">
+              <input type="checkbox" id="mma-on">
+              <span class="toggle-track"></span>
+            </label>
+            <span class="fc-name">Median + MA</span>
+            <span class="fc-dot" style="background:#FFD700"></span>
+          </div>
+          <div class="fc-params">
+            <div class="param-row">
+              <span class="param-lbl">Median Win</span>
+              <span class="param-val" id="mma-med-win-val">1 hr</span>
+              <input type="range" class="win-slider" id="mma-med-win" min="0" max="13" value="2" step="1">
+            </div>
+            <div class="param-row">
+              <span class="param-lbl">MA Win</span>
+              <span class="param-val" id="mma-ma-win-val">3 hr</span>
+              <input type="range" class="win-slider" id="mma-ma-win" min="0" max="13" value="4" step="1">
+            </div>
+          </div>
+        </div>
+
       </aside>
     </div>
   </section>
@@ -230,7 +254,7 @@
 
 </main>
 
-<script src="filters.js?v=4"></script>
-<script src="app.js?v=4"></script>
+<script src="filters.js?v=5"></script>
+<script src="app.js?v=5"></script>
 </body>
 </html>

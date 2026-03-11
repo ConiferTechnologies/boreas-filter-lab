@@ -2,10 +2,10 @@
 
 // ── Constants ──────────────────────────────────────────────────────────────
 
-const FILTER_KEYS   = ['ma', 'med', 'pct', 'ema', 'ors', 'ema2'];
+const FILTER_KEYS   = ['ma', 'med', 'pct', 'ema', 'ors', 'ema2', 'mma'];
 
-const FILTER_COLORS = { ma: '#00BFFF', med: '#FF6B00', pct: '#39FF14', ema: '#FF00FF', ors: '#FF4444', ema2: '#9D00FF' };
-const FILTER_NAMES  = { ma: 'Moving Avg', med: 'Median', pct: 'Pct Clipped', ema: 'EMA', ors: 'ORS', ema2: 'Double EMA' };
+const FILTER_COLORS = { ma: '#00BFFF', med: '#FF6B00', pct: '#39FF14', ema: '#FF00FF', ors: '#FF4444', ema2: '#9D00FF', mma: '#FFD700' };
+const FILTER_NAMES  = { ma: 'Moving Avg', med: 'Median', pct: 'Pct Clipped', ema: 'EMA', ors: 'ORS', ema2: 'Double EMA', mma: 'Median + MA' };
 
 const RAW_WEIGHT_COLOR = '#ffffff';
 const RAW_ROL_COLOR    = '#ffffff';
@@ -68,6 +68,7 @@ const state = {
     ema: { enabled: false, alpha: 0.1 },
     ors:  { enabled: false, windowHrs: 1, alpha: 0.1 },
     ema2: { enabled: false, alpha: 0.1 },
+    mma:  { enabled: false, medWindowHrs: 1, maWindowHrs: 2 },
   },
   settleThreshold: 5,
   graphLocked: { g1: true, g2: true }, // default: locked (autoscale, no interaction)
@@ -211,7 +212,9 @@ function setupFilterControls() {
   bindWindowSlider('ma-win',  'ma-win-val',  2, (v) => { state.filters.ma.windowHrs  = v; debouncedRefreshFiltered(); });
   bindWindowSlider('med-win', 'med-win-val', 3, (v) => { state.filters.med.windowHrs = v; debouncedRefreshFiltered(); });
   bindWindowSlider('pct-win', 'pct-win-val', 2, (v) => { state.filters.pct.windowHrs = v; debouncedRefreshFiltered(); });
-  bindWindowSlider('ors-win', 'ors-win-val', 2, (v) => { state.filters.ors.windowHrs = v; debouncedRefreshFiltered(); });
+  bindWindowSlider('ors-win',     'ors-win-val',     2, (v) => { state.filters.ors.windowHrs     = v; debouncedRefreshFiltered(); });
+  bindWindowSlider('mma-med-win', 'mma-med-win-val', 2, (v) => { state.filters.mma.medWindowHrs  = v; debouncedRefreshFiltered(); });
+  bindWindowSlider('mma-ma-win',  'mma-ma-win-val',  4, (v) => { state.filters.mma.maWindowHrs   = v; debouncedRefreshFiltered(); });
 
   const ema2AlphaSl  = document.getElementById('ema2-alpha');
   const ema2AlphaVal = document.getElementById('ema2-alpha-val');
@@ -428,6 +431,7 @@ function renderGraph2() {
       if (key === 'ema') filtered = emaFilter(state.rolData, f.alpha);
       if (key === 'ors')  filtered = medianEmaFilter(state.rolData, f.windowHrs, f.alpha);
       if (key === 'ema2') filtered = doubleEmaFilter(state.rolData, f.alpha);
+      if (key === 'mma')  filtered = medianMAFilter(state.rolData, f.medWindowHrs, f.maWindowHrs);
 
       traces.push(traceLine(
         isoTimes(state.rolData), filtered,

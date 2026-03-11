@@ -18,6 +18,7 @@
   --ema:  #FF00FF;
   --ors:  #FF4444;
   --ema2: #9D00FF;
+  --mma:  #FFD700;
 }
 
 body {
@@ -245,6 +246,7 @@ main {
 .filter-card[data-filter="ema"]  { border-left: 3px solid var(--ema); }
 .filter-card[data-filter="ors"]  { border-left: 3px solid var(--ors); }
 .filter-card[data-filter="ema2"] { border-left: 3px solid var(--ema2); }
+.filter-card[data-filter="mma"]  { border-left: 3px solid var(--mma); }
 
 .filter-card.disabled { opacity: 0.45; }
 
@@ -311,6 +313,7 @@ main {
 .filter-card[data-filter="ema"]  .toggle input:checked + .toggle-track { background: var(--ema); }
 .filter-card[data-filter="ors"]  .toggle input:checked + .toggle-track { background: var(--ors); }
 .filter-card[data-filter="ema2"] .toggle input:checked + .toggle-track { background: var(--ema2); }
+.filter-card[data-filter="mma"]  .toggle input:checked + .toggle-track { background: var(--mma); }
 
 /* ── Param rows ───────────────────────────────────────────────────────────── */
 .fc-params { display: flex; flex-direction: column; gap: 8px; }
@@ -383,6 +386,7 @@ input[type="range"]::-moz-range-thumb {
 .filter-card[data-filter="ema"]  input[type="range"]::-webkit-slider-thumb { background: var(--ema); }
 .filter-card[data-filter="ors"]  input[type="range"]::-webkit-slider-thumb { background: var(--ors); }
 .filter-card[data-filter="ema2"] input[type="range"]::-webkit-slider-thumb { background: var(--ema2); }
+.filter-card[data-filter="mma"]  input[type="range"]::-webkit-slider-thumb { background: var(--mma); }
 
 .filter-card[data-filter="ma"]   input[type="range"]::-moz-range-thumb { background: var(--ma); }
 .filter-card[data-filter="med"]  input[type="range"]::-moz-range-thumb { background: var(--med); }
@@ -390,6 +394,7 @@ input[type="range"]::-moz-range-thumb {
 .filter-card[data-filter="ema"]  input[type="range"]::-moz-range-thumb { background: var(--ema); }
 .filter-card[data-filter="ors"]  input[type="range"]::-moz-range-thumb { background: var(--ors); }
 .filter-card[data-filter="ema2"] input[type="range"]::-moz-range-thumb { background: var(--ema2); }
+.filter-card[data-filter="mma"]  input[type="range"]::-moz-range-thumb { background: var(--mma); }
 
 /* ── Graph 3 threshold control ────────────────────────────────────────────── */
 .threshold-ctl {
